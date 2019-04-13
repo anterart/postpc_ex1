@@ -29,6 +29,16 @@ public class MainActivity extends AppCompatActivity {
         sendMessageInput = findViewById(R.id.sendMessageEditText);
         sentMessages = findViewById(R.id.sentMessages);
 
+        if (savedInstanceState != null)
+        {
+            sendMessageInput.setText(savedInstanceState.getString("sendMessageInput"));
+            Items = savedInstanceState.getStringArrayList("Items");
+        }
+        adapter = new MessageAdapter(this, Items);
+        layoutManager = new LinearLayoutManager(this);
+        sentMessages.setLayoutManager(layoutManager);
+        sentMessages.setAdapter(adapter);
+
         sendButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String newMessage = sendMessageInput.getText().toString();
@@ -46,16 +56,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        if (savedInstanceState != null)
-        {
-            sendMessageInput.setText(savedInstanceState.getString("sendMessageInput"));
-            Items = savedInstanceState.getStringArrayList("Items");
-        }
-        adapter = new MessageAdapter(this, Items);
-        layoutManager = new LinearLayoutManager(this);
-        sentMessages.setLayoutManager(layoutManager);
-        sentMessages.setAdapter(adapter);
     }
 
     @Override
