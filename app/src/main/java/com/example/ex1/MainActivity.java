@@ -34,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
                 String newMessage = sendMessageInput.getText().toString();
                 if (newMessage.length() == 0)
                 {
-                    Toast toast = Toast.makeText(getApplicationContext(), "LOL! BAD BOY!", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "You can't send blank message!", Toast.LENGTH_SHORT);
                     toast.show();
                 }
                 else
