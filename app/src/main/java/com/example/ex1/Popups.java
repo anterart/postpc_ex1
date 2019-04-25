@@ -13,7 +13,8 @@ public class Popups
         public MessageRecyclerUtils.MessageClickCallback callback;
 
         @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
+        public Dialog onCreateDialog(Bundle savedInstanceState)
+        {
             // Use the Builder class for convenient dialog construction
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("Are you sure you want to delete this message?")
@@ -35,6 +36,11 @@ public class Popups
                     });
             // Create the AlertDialog object and return it
             return builder.create();
+        }
+
+        public void updateListener(MessageRecyclerUtils.MessageClickCallback callback)
+        {
+            this.callback = callback;
         }
     }
 }

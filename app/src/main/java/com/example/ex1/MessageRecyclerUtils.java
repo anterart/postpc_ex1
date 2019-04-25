@@ -31,7 +31,8 @@ public class MessageRecyclerUtils
 
         @NonNull
         @Override
-        public MessageHolder onCreateViewHolder(@NonNull final ViewGroup parent, int itemType) {
+        public MessageHolder onCreateViewHolder(@NonNull final ViewGroup parent, int itemType)
+        {
             final Context context = parent.getContext();
             View itemView = LayoutInflater.from(context)
                     .inflate(R.layout.message, parent, false);
@@ -39,11 +40,11 @@ public class MessageRecyclerUtils
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-//                    String message = getItem(holder.getAdapterPosition());
                     Popups.DeleteMessageDialogFragment deleteMessagePopup = new
                             Popups.DeleteMessageDialogFragment();
                     deleteMessagePopup.adapterPosition = holder.getAdapterPosition();
                     deleteMessagePopup.callback = callback;
+
                     FragmentManager fm = ((AppCompatActivity)context).getSupportFragmentManager();
                     deleteMessagePopup.show(fm, "deleteMessagePopup");
                     return true;
