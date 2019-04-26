@@ -1,6 +1,8 @@
 package com.example.ex1;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,12 +15,12 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements MessageRecyclerUtils.MessageClickCallback
 {
-    ArrayList<String> Items;
+    State state;
     MessageRecyclerUtils.MessageAdapter adapter;
     EditText sendMessageInput;
     RecyclerView sentMessages;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity
         loadMainActivity(savedInstanceState);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             public void onClick(View v)
             {
                 sendButtonOnClick();
@@ -56,38 +59,39 @@ public class MainActivity extends AppCompatActivity
     {
         super.onSaveInstanceState(outState);
         outState.putString("sendMessageInput", sendMessageInput.getText().toString());
-        outState.putStringArrayList("Items", Items);
+        Gson gson = new Gson();
+        String jsonState = gson.toJson(state);
+        outState.putString("state", jsonState);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-    public void longMessageClickPositive(int position)
+    public void longMessageClickPositive(Message longClickedMessage)
     {
-        ArrayList<String> messagesCopy = new ArrayList<>(this.Items);
-        messagesCopy.remove(position);
-        this.Items = messagesCopy;
-        this.adapter.submitList(this.Items);
-        saveDataToSharedPreferences();
+        state.removeMessageById(longClickedMessage.get_id());
+        List<Message> messages = state.get_all_messages();
+        this.adapter.submitList(messages);
     }
 
     @Override
-    public void longMessageClickNegative(int position)
+    public void longMessageClickNegative(Message longClickedMessage)
     {
 
     }
 
     protected void loadDataFromSharedPreferences()
     {
-        if (Items == null)
+        if (state == null)
         {
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             Gson gson = new Gson();
-            String json = sharedPreferences.getString("messages", null);
-            Type type = new TypeToken<ArrayList<String>>() {}.getType();
-            Items = gson.fromJson(json, type);
-            if (Items == null)
+            String jsonState = sharedPreferences.getString("state", null);
+            Type type = new TypeToken<State>() {}.getType();
+            state = gson.fromJson(jsonState, type);
+            if (state == null)
             {
-                Items = new ArrayList<>();
+                state = State.getInstance();
             }
         }
     }
@@ -98,14 +102,14 @@ public class MainActivity extends AppCompatActivity
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
-        String json = gson.toJson(Items);
-        editor.putString("messages", json);
+        String json = gson.toJson(state);
+        editor.putString("state", json);
         editor.apply();
     }
 
     protected void log()
     {
-        Log.i("Messages array size", String.valueOf(Items.size()));
+        Log.i("Messages array size", String.valueOf(state.get_num_of_messages()));
     }
 
     protected void getViews()
@@ -120,7 +124,10 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState != null)
         {
             sendMessageInput.setText(savedInstanceState.getString("sendMessageInput"));
-            Items = savedInstanceState.getStringArrayList("Items");
+            String jsonState = savedInstanceState.getString("state");
+            Gson gson = new Gson();
+            Type type = new TypeToken<State>() {}.getType();
+            state = gson.fromJson(jsonState, type);
         }
     }
 
@@ -129,21 +136,22 @@ public class MainActivity extends AppCompatActivity
         adapter = new MessageRecyclerUtils.MessageAdapter();
         sentMessages.setAdapter(adapter);
         adapter.callback = this;
-        adapter.submitList(Items);
+        adapter.submitList(state.get_all_messages());
         layoutManager = new LinearLayoutManager(this);
         sentMessages.setLayoutManager(layoutManager);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     protected void sendButtonOnClick()
     {
-        String newMessage = sendMessageInput.getText().toString();
-        if (newMessage.length() == 0)
+        String newMessageText = sendMessageInput.getText().toString();
+        if (newMessageText.length() == 0)
         {
             sendEmptyMessage();
         }
         else
         {
-            sendMessage(newMessage);
+            sendMessage(newMessageText);
         }
     }
 
@@ -154,9 +162,10 @@ public class MainActivity extends AppCompatActivity
         toast.show();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     protected void sendMessage(String newMessage)
     {
-        Items.add(newMessage);
+        state.add_message(newMessage);
         adapter.notifyItemInserted(adapter.getItemCount());
         sendMessageInput.setText("");
         saveDataToSharedPreferences();

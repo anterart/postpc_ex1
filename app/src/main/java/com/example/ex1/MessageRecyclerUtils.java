@@ -16,12 +16,12 @@ public class MessageRecyclerUtils
 {
     interface MessageClickCallback
     {
-        void longMessageClickPositive(int position);
+        void longMessageClickPositive(Message longClickedMessage);
 
-        void longMessageClickNegative(int position);
+        void longMessageClickNegative(Message longClickedMessage);
     }
 
-    static class MessageAdapter extends ListAdapter<String, MessageHolder>
+    static class MessageAdapter extends ListAdapter<Message, MessageHolder>
     {
 
         public MessageAdapter()
@@ -41,11 +41,12 @@ public class MessageRecyclerUtils
             final MessageHolder holder = new MessageHolder(itemView);
             holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
-                public boolean onLongClick(View v) {
+                public boolean onLongClick(View v)
+                {
                     Popups.DeleteMessageDialogFragment deleteMessagePopup = new
                             Popups.DeleteMessageDialogFragment();
                     deleteMessagePopup.setRetainInstance(true);
-                    deleteMessagePopup.adapterPosition = holder.getAdapterPosition();
+                    deleteMessagePopup.longClickedMessage = getItem(holder.getAdapterPosition());
                     deleteMessagePopup.callback = callback;
                     FragmentManager fm = ((AppCompatActivity)context).getSupportFragmentManager();
                     deleteMessagePopup.show(fm, "deleteMessagePopup");
@@ -61,8 +62,8 @@ public class MessageRecyclerUtils
         @Override
         public void onBindViewHolder(@NonNull MessageHolder messageHolder, int position)
         {
-            String t = getItem(position);
-            messageHolder.text.setText(t);
+            Message message = getItem(position);
+            messageHolder.text.setText(message.get_message());
         }
     }
 
@@ -75,16 +76,16 @@ public class MessageRecyclerUtils
         }
     }
 
-    static class MessageCallback extends DiffUtil.ItemCallback<String>
+    static class MessageCallback extends DiffUtil.ItemCallback<Message>
     {
         @Override
-        public boolean areItemsTheSame(@NonNull String s1, @NonNull String s2) {
-            return s1.equals(s2);
+        public boolean areItemsTheSame(@NonNull Message m1, @NonNull Message m2) {
+            return m1.get_id() == m2.get_id();
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull String s1, @NonNull String s2) {
-            return s1.equals(s2);
+        public boolean areContentsTheSame(@NonNull Message m1, @NonNull Message m2) {
+            return m1.get_message().equals(m2.get_message());
         }
     }
 

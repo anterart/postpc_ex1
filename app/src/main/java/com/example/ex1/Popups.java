@@ -9,7 +9,7 @@ import android.support.v4.app.DialogFragment;
 public class Popups
 {
     static public class DeleteMessageDialogFragment extends DialogFragment {
-        public int adapterPosition;
+        public Message longClickedMessage;
         public MessageRecyclerUtils.MessageClickCallback callback;
 
         @Override
@@ -22,7 +22,7 @@ public class Popups
                         public void onClick(DialogInterface dialog, int id) {
                             if (callback != null)
                             {
-                                callback.longMessageClickPositive(adapterPosition);
+                                callback.longMessageClickPositive(longClickedMessage);
                             }
                         }
                     })
@@ -30,7 +30,7 @@ public class Popups
                         public void onClick(DialogInterface dialog, int id) {
                             if (callback != null)
                             {
-                                callback.longMessageClickNegative(adapterPosition);
+                                callback.longMessageClickNegative(longClickedMessage);
                             }
                         }
                     });
