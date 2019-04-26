@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    protected void loadDataFromSharedPreferences()
+    protected boolean loadDataFromSharedPreferences()
     {
         if (state == null)
         {
@@ -93,7 +93,9 @@ public class MainActivity extends AppCompatActivity
             {
                 state = State.getInstance();
             }
+            return true;
         }
+        return false;
     }
 
     protected void saveDataToSharedPreferences()
@@ -119,7 +121,7 @@ public class MainActivity extends AppCompatActivity
         sentMessages = findViewById(R.id.sentMessages);
     }
 
-    protected void getSavedInstanceState(Bundle savedInstanceState)
+    protected boolean getSavedInstanceState(Bundle savedInstanceState)
     {
         if (savedInstanceState != null)
         {
@@ -128,7 +130,9 @@ public class MainActivity extends AppCompatActivity
             Gson gson = new Gson();
             Type type = new TypeToken<State>() {}.getType();
             state = gson.fromJson(jsonState, type);
+            return true;
         }
+        return false;
     }
 
     protected void setMessagesRecyclerView()
@@ -173,10 +177,13 @@ public class MainActivity extends AppCompatActivity
 
     protected void loadMainActivity(Bundle savedInstanceState)
     {
-        loadDataFromSharedPreferences();
-        log();
         getViews();
-        getSavedInstanceState(savedInstanceState);
+        if (!getSavedInstanceState(savedInstanceState))
+        {
+            state.loadMessagesListFromRemoteDatabase();
+            loadDataFromSharedPreferences();
+        }
+        log();
         setMessagesRecyclerView();
     }
 }
