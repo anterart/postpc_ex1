@@ -41,6 +41,16 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    protected void onResume() {
+        super.onResume();
+        Popups.DeleteMessageDialogFragment mDialogFragment =
+                (Popups.DeleteMessageDialogFragment)getSupportFragmentManager()
+                        .findFragmentByTag("deleteMessagePopup");
+        if(mDialogFragment  != null){
+            mDialogFragment.callback = this;
+        }
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
@@ -50,16 +60,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void longMessageClick(int position, boolean sure)
+    public void longMessageClickPositive(int position)
     {
-        if (sure)
-        {
-            ArrayList<String> messagesCopy = new ArrayList<>(this.Items);
-            messagesCopy.remove(position);
-            this.Items = messagesCopy;
-            this.adapter.submitList(this.Items);
-            saveDataToSharedPreferences();
-        }
+        ArrayList<String> messagesCopy = new ArrayList<>(this.Items);
+        messagesCopy.remove(position);
+        this.Items = messagesCopy;
+        this.adapter.submitList(this.Items);
+        saveDataToSharedPreferences();
+    }
+
+    @Override
+    public void longMessageClickNegative(int position)
+    {
+
     }
 
     protected void loadDataFromSharedPreferences()

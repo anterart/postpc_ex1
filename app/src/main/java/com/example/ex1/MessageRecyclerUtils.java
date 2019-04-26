@@ -16,7 +16,9 @@ public class MessageRecyclerUtils
 {
     interface MessageClickCallback
     {
-        void longMessageClick(int position, boolean sure);
+        void longMessageClickPositive(int position);
+
+        void longMessageClickNegative(int position);
     }
 
     static class MessageAdapter extends ListAdapter<String, MessageHolder>
@@ -42,9 +44,9 @@ public class MessageRecyclerUtils
                 public boolean onLongClick(View v) {
                     Popups.DeleteMessageDialogFragment deleteMessagePopup = new
                             Popups.DeleteMessageDialogFragment();
+                    deleteMessagePopup.setRetainInstance(true);
                     deleteMessagePopup.adapterPosition = holder.getAdapterPosition();
                     deleteMessagePopup.callback = callback;
-
                     FragmentManager fm = ((AppCompatActivity)context).getSupportFragmentManager();
                     deleteMessagePopup.show(fm, "deleteMessagePopup");
                     return true;

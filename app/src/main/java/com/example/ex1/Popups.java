@@ -22,7 +22,7 @@ public class Popups
                         public void onClick(DialogInterface dialog, int id) {
                             if (callback != null)
                             {
-                                callback.longMessageClick(adapterPosition, true);
+                                callback.longMessageClickPositive(adapterPosition);
                             }
                         }
                     })
@@ -30,7 +30,7 @@ public class Popups
                         public void onClick(DialogInterface dialog, int id) {
                             if (callback != null)
                             {
-                                callback.longMessageClick(adapterPosition, false);
+                                callback.longMessageClickNegative(adapterPosition);
                             }
                         }
                     });
@@ -38,9 +38,15 @@ public class Popups
             return builder.create();
         }
 
-        public void updateListener(MessageRecyclerUtils.MessageClickCallback callback)
+        @Override
+        public void onDestroyView()
         {
-            this.callback = callback;
+            Dialog dialog = getDialog();
+            // handles https://code.google.com/p/android/issues/detail?id=17423
+            if (dialog != null && getRetainInstance()) {
+                dialog.setDismissMessage(null);
+            }
+            super.onDestroyView();
         }
     }
 }
