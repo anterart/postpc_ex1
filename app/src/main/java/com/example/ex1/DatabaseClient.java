@@ -20,7 +20,7 @@ import java.io.IOException;
         FileInputStream serviceAccount = null;
         try {
             serviceAccount = new FileInputStream
-                    ("C:\\Users\\my-da\\Desktop\\uni\\4\\PostPC\\targilim\\postpc_ex1\\self-chat-7f2cc-firebase-adminsdk-3lyem-3c7994ebcf.json");
+                    ("self-chat-7f2cc-firebase-adminsdk-3lyem-3c7994ebcf.json");
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .setDatabaseUrl("https://self-chat-7f2cc.firebaseio.com")
