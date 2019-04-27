@@ -23,6 +23,7 @@ public class State
     private List<Message> messages;
     private int next_message_id;
     private static State state;
+    public static DatabaseStateRefreshable callback;
 
     private State()
     {
@@ -90,7 +91,7 @@ public class State
         deleteMessageFromRemoteDataBae(message_id);
     }
 
-    public void loadMessagesListFromRemoteDatabase(MainActivity mainActivity)
+    public void loadMessagesListFromRemoteDatabase()
     {
         CollectionReference messagesRef = DatabaseClient.getFirestoreClient().collection("messages");
         messagesRef.get()
@@ -112,8 +113,8 @@ public class State
                         {
                             next_message_id = Collections.max(messages).get_id() + 1;
                         }
-                        mainActivity.setMessagesRecyclerView();
-                        mainActivity.log();
+                        callback.setMessagesRecyclerView();
+                        callback.log();
                     }
                 });
     }
@@ -124,5 +125,12 @@ public class State
         String messageText = documentSnapshot.getString("_message");
         String local_timestamp = documentSnapshot.getString("_local_timestamp");
         return new Message(id, messageText, local_timestamp);
+    }
+
+    public interface DatabaseStateRefreshable
+    {
+        public void log();
+
+        public void setMessagesRecyclerView();
     }
 }

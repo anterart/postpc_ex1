@@ -18,7 +18,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements MessageRecyclerUtils.MessageClickCallback
+        implements MessageRecyclerUtils.MessageClickCallback, State.DatabaseStateRefreshable
 {
     State state;
     MessageRecyclerUtils.MessageAdapter adapter;
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity
                         .findFragmentByTag("deleteMessagePopup");
         if(mDialogFragment  != null){
             mDialogFragment.callback = this;
+            State.callback = this;
         }
     }
 
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity
             if (state == null)
             {
                 state = State.getInstance();
+                State.callback = this;
             }
             return true;
         }
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity
         editor.apply();
     }
 
-    protected void log()
+    public void log()
     {
         Log.i("Messages array size", String.valueOf(state.get_num_of_messages()));
     }
@@ -135,7 +137,7 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
-    protected void setMessagesRecyclerView()
+    public void setMessagesRecyclerView()
     {
         adapter = new MessageRecyclerUtils.MessageAdapter();
         sentMessages.setAdapter(adapter);
@@ -181,7 +183,7 @@ public class MainActivity extends AppCompatActivity
         if (!getSavedInstanceState(savedInstanceState))
         {
             loadDataFromSharedPreferences();
-            state.loadMessagesListFromRemoteDatabase(this);
+            state.loadMessagesListFromRemoteDatabase();
         }
         else
         {
