@@ -104,6 +104,7 @@ public class State
                             next_message_id = Collections.max(messages).get_id() + 1;
                         }
                         mainActivity.setMessagesRecyclerView();
+                        mainActivity.log();
                     }
                 });
     }

@@ -183,7 +183,11 @@ public class MainActivity extends AppCompatActivity
             loadDataFromSharedPreferences();
             state.loadMessagesListFromRemoteDatabase(this);
         }
-        log();
-        setMessagesRecyclerView();
+        else
+        {
+            log();
+            setMessagesRecyclerView();
+        }
+
     }
 }
