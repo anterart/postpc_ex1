@@ -3,19 +3,15 @@ package com.example.ex1;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
-import com.google.cloud.firestore.WriteResult;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class State
@@ -23,13 +19,13 @@ public class State
     private List<Message> messages;
     private int next_message_id;
     private static State state;
-    private Firestore firestoreClient;
+//    private FirebaseFirestore firestoreClient;
 
     private State()
     {
         messages = new ArrayList<>();
         next_message_id = 0;
-        firestoreClient = DatabaseClient.getFirestoreClient();
+//        firestoreClient = DatabaseClient.getFirestoreClient();
     }
 
     public static State getInstance()
@@ -49,14 +45,13 @@ public class State
     private void addMessageToRemoteDatabase(Message message)
     {
         String messageId = String.valueOf(message.get_id());
-        DocumentReference docRef = firestoreClient.collection("messages").document();
-        docRef.set(message);
+        DatabaseClient.getFirestoreClient().collection("messages").document(messageId).set(message);
     }
 
     private void deleteMessageFromRemoteDataBae(final int message_id)
     {
         String messageId = String.valueOf(message_id);
-        firestoreClient.collection("messages").document(messageId).delete();
+        DatabaseClient.getFirestoreClient().collection("messages").document(messageId).delete();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -83,20 +78,32 @@ public class State
 
     public void loadMessagesListFromRemoteDatabase()
     {
-        try {
-            ApiFuture<QuerySnapshot> future = firestoreClient.collection("messages").get();
-            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-            List<Message> remoteMessages = new ArrayList<>();
-            for (QueryDocumentSnapshot document: documents)
-            {
-                remoteMessages.add(document.toObject(Message.class));
-            }
-            messages = new ArrayList<>(remoteMessages);
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        if (firestoreClient == null)
+//        {
+//            firestoreClient = DatabaseClient.getFirestoreClient();
+//        }
+        CollectionReference messagesRef = DatabaseClient.getFirestoreClient().collection("messages");
+        messagesRef.get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots)
+                    {
+                        List<Message> remoteMessages = new ArrayList<>();
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots)
+                        {
+                            Message message = documentSnapshot.toObject(Message.class);
+                            remoteMessages.add(message);
+                        }
+                        messages = new ArrayList<>(remoteMessages);
+                        if (messages.size() == 0)
+                        {
+                            next_message_id = 0;
+                        }
+                        else
+                        {
+                            next_message_id = Collections.max(messages).get_id() + 1;
+                        }
+                    }
+                });
     }
 }
