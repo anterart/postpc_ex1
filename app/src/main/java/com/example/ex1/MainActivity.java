@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity
         if (!getSavedInstanceState(savedInstanceState))
         {
             loadDataFromSharedPreferences();
-            state.loadMessagesListFromRemoteDatabase();
+            state.loadMessagesListFromRemoteDatabase(this);
         }
         log();
         setMessagesRecyclerView();

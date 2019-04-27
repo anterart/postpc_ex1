@@ -3,9 +3,9 @@ package com.example.ex1;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -76,7 +76,7 @@ public class State
         deleteMessageFromRemoteDataBae(message_id);
     }
 
-    public void loadMessagesListFromRemoteDatabase()
+    public void loadMessagesListFromRemoteDatabase(MainActivity mainActivity)
     {
 //        if (firestoreClient == null)
 //        {
@@ -103,6 +103,7 @@ public class State
                         {
                             next_message_id = Collections.max(messages).get_id() + 1;
                         }
+                        mainActivity.setMessagesRecyclerView();
                     }
                 });
     }

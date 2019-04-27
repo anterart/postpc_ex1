@@ -8,9 +8,11 @@ import java.time.format.DateTimeFormatter;
 
 public class Message implements Comparable<Message>
 {
-    private final int id;
-    private final String message;
-    private final String local_timestamp;
+    private int id;
+    private String message;
+    private String local_timestamp;
+
+    public Message(){}
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public Message(int id, String message)
@@ -20,6 +22,13 @@ public class Message implements Comparable<Message>
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         this.local_timestamp = now.format(formatter);
+    }
+
+    public Message(int id, String message, String local_timestamp)
+    {
+        this.id = id;
+        this.message = message;
+        this.local_timestamp = local_timestamp;
     }
 
     public int get_id()

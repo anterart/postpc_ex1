@@ -2,8 +2,6 @@ package com.example.ex1;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 
  public class DatabaseClient
 {
