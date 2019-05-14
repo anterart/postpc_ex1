@@ -224,10 +224,6 @@ public class MainActivity extends AppCompatActivity
                 loadData();
             }
         }
-        else
-        {
-            setMessagesRecyclerView();
-        }
-
+        setMessagesRecyclerView();
     }
 }
