@@ -1,5 +1,6 @@
 package com.example.ex1;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity
         implements MessageRecyclerUtils.MessageClickCallback, State.DatabaseStateRefreshable
 {
     State state;
+    boolean waitingForDatabase = false;
     MessageRecyclerUtils.MessageAdapter adapter;
     EditText sendMessageInput;
     RecyclerView sentMessages;
@@ -51,8 +53,8 @@ public class MainActivity extends AppCompatActivity
                         .findFragmentByTag("deleteMessagePopup");
         if(mDialogFragment  != null){
             mDialogFragment.callback = this;
-            State.callback = this;
         }
+        State.callback = this;
     }
 
     @Override
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     {
         super.onSaveInstanceState(outState);
         outState.putString("sendMessageInput", sendMessageInput.getText().toString());
+        outState.putBoolean("waitingForDatabase", waitingForDatabase);
         Gson gson = new Gson();
         String jsonState = gson.toJson(state);
         outState.putString("state", jsonState);
@@ -80,9 +83,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    protected boolean loadDataFromSharedPreferences()
+    private class AsyncDataLoad extends AsyncTask<Void, Void, Void>
     {
-        if (state == null)
+
+        @Override
+        protected Void doInBackground(Void... voids)
         {
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -90,14 +95,25 @@ public class MainActivity extends AppCompatActivity
             String jsonState = sharedPreferences.getString("state", null);
             Type type = new TypeToken<State>() {}.getType();
             state = gson.fromJson(jsonState, type);
+            if (state != null)
+            {
+                state.loadMessagesListFromRemoteDatabase();
+            }
+            return null;
+        }
+    }
+
+    protected void loadData()
+    {
+        if (state == null)
+        {
+            new AsyncDataLoad().execute();
             if (state == null)
             {
                 state = State.getInstance();
-                State.callback = this;
+                State.callback = MainActivity.this;
             }
-            return true;
         }
-        return false;
     }
 
     protected void saveDataToSharedPreferences()
@@ -127,12 +143,16 @@ public class MainActivity extends AppCompatActivity
     {
         if (savedInstanceState != null)
         {
+            waitingForDatabase = savedInstanceState.getBoolean("waitingForDatabase");
             sendMessageInput.setText(savedInstanceState.getString("sendMessageInput"));
-            String jsonState = savedInstanceState.getString("state");
-            Gson gson = new Gson();
-            Type type = new TypeToken<State>() {}.getType();
-            state = gson.fromJson(jsonState, type);
-            return true;
+            if (!waitingForDatabase)
+            {
+                String jsonState = savedInstanceState.getString("state");
+                Gson gson = new Gson();
+                Type type = new TypeToken<State>() {}.getType();
+                state = gson.fromJson(jsonState, type);
+                return true;
+            }
         }
         return false;
     }
@@ -145,6 +165,22 @@ public class MainActivity extends AppCompatActivity
         adapter.submitList(state.get_all_messages());
         layoutManager = new LinearLayoutManager(this);
         sentMessages.setLayoutManager(layoutManager);
+    }
+
+    @Override
+    public void setWaitingForDataBaseStatus(boolean status)
+    {
+        waitingForDatabase = status;
+    }
+
+    @Override
+    public State getState() {
+        return state;
+    }
+
+    @Override
+    public void setState(State state) {
+        this.state = state;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -179,15 +215,17 @@ public class MainActivity extends AppCompatActivity
 
     protected void loadMainActivity(Bundle savedInstanceState)
     {
+        State.callback = this;
         getViews();
         if (!getSavedInstanceState(savedInstanceState))
         {
-            loadDataFromSharedPreferences();
-            state.loadMessagesListFromRemoteDatabase();
+            if(!waitingForDatabase)
+            {
+                loadData();
+            }
         }
         else
         {
-            log();
             setMessagesRecyclerView();
         }
 
