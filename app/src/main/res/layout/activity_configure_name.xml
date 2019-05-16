@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/helloUser"
+        android:layout_width="fill_parent"
+        android:layout_height="5dp"
+        android:layout_weight="10"
+        android:gravity="center"
+        android:text="Hello, new user!"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+
+    <EditText
+        android:id="@+id/fillMyName"
+        android:layout_width="fill_parent"
+        android:layout_height="5dp"
+        android:layout_weight="10"
+        android:gravity="center"
+        android:hint="Please fill up your name:"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+
+    <Button
+        android:id="@+id/sendMyName"
+        android:layout_width="fill_parent"
+        android:layout_height="5dp"
+        android:layout_weight="10"
+        android:gravity="center"
+        android:text="This is my name"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="50" />
+
+    <Button
+        android:id="@+id/skip"
+        android:layout_width="fill_parent"
+        android:layout_height="5dp"
+        android:layout_weight="10"
+        android:gravity="center"
+        android:text="Skip"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        />
+</LinearLayout>
