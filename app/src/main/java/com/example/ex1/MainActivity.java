@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -280,5 +281,20 @@ public class MainActivity extends AppCompatActivity
                 sendButtonOnClick();
             }
         });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 777){
+            if (resultCode == RESULT_OK){
+                int messageId = data.getIntExtra("message_id", -1);
+                String messageText = data.getStringExtra("message_text");
+                String messageDeviceId = data.getStringExtra("message_device_id");
+                String messageTimestamp = data.getStringExtra("message_timestamp");
+                Message message = new Message(messageId, messageText, messageDeviceId, messageTimestamp);
+                longMessageClickPositive(message);
+            }
+        }
     }
 }

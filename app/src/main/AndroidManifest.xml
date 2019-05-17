@@ -3,6 +3,7 @@
     package="com.example.ex1">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".MessageDetailsActivity"></activity>
         <activity
             android:name=".LoadUsernameActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -19,12 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ConfigureNameActivity">
-
-        </activity>
+        <activity android:name=".ConfigureNameActivity"></activity>
         <activity
             android:name=".MainActivity"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

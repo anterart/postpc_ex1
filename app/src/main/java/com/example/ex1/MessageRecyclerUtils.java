@@ -1,6 +1,7 @@
 package com.example.ex1;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -43,13 +44,21 @@ public class MessageRecyclerUtils
                 @Override
                 public boolean onLongClick(View v)
                 {
-                    Popups.DeleteMessageDialogFragment deleteMessagePopup = new
-                            Popups.DeleteMessageDialogFragment();
-                    deleteMessagePopup.setRetainInstance(true);
-                    deleteMessagePopup.longClickedMessage = getItem(holder.getAdapterPosition());
-                    deleteMessagePopup.callback = callback;
-                    FragmentManager fm = ((AppCompatActivity)context).getSupportFragmentManager();
-                    deleteMessagePopup.show(fm, "deleteMessagePopup");
+//                    Popups.DeleteMessageDialogFragment deleteMessagePopup = new
+//                            Popups.DeleteMessageDialogFragment();
+//                    deleteMessagePopup.setRetainInstance(true);
+//                    deleteMessagePopup.longClickedMessage = getItem(holder.getAdapterPosition());
+//                    deleteMessagePopup.callback = callback;
+//                    FragmentManager fm = ((AppCompatActivity)context).getSupportFragmentManager();
+//                    deleteMessagePopup.show(fm, "deleteMessagePopup");
+
+                    Intent intent = new Intent((MainActivity)callback, MessageDetailsActivity.class);
+                    Message message = getItem(holder.getAdapterPosition());
+                    intent.putExtra("message_id", message.get_id());
+                    intent.putExtra("message_text", message.get_message());
+                    intent.putExtra("message_device_id", message.get_deviceID());
+                    intent.putExtra("message_timestamp", message.get_local_timestamp());
+                    ((MainActivity) callback).startActivityForResult(intent, 777);
                     return true;
                 }
             });
