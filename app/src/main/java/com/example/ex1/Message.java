@@ -10,24 +10,27 @@ public class Message implements Comparable<Message>
 {
     private int id;
     private String message;
+    private String deviceID;
     private String local_timestamp;
 
     public Message(){}
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public Message(int id, String message)
+    public Message(int id, String message, String deviceID)
     {
         this.id = id;
         this.message = message;
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         this.local_timestamp = now.format(formatter);
+        this.deviceID = deviceID;
     }
 
-    public Message(int id, String message, String local_timestamp)
+    public Message(int id, String message, String deviceID, String local_timestamp)
     {
         this.id = id;
         this.message = message;
+        this.deviceID = deviceID;
         this.local_timestamp = local_timestamp;
     }
 
@@ -40,6 +43,8 @@ public class Message implements Comparable<Message>
     {
         return this.message;
     }
+
+    public String get_deviceID() { return this.deviceID; }
 
     public String get_local_timestamp()
     {

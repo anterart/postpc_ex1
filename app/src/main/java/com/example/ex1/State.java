@@ -75,9 +75,9 @@ public class State
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public void add_message(String messageText)
+    public void add_message(String messageText, String deviceID)
     {
-        Message message = new Message(next_message_id, messageText);
+        Message message = new Message(next_message_id, messageText, deviceID);
         messages.add(message);
         addMessageToRemoteDatabase(message);
         next_message_id++;
@@ -147,7 +147,8 @@ public class State
         int id = Objects.requireNonNull(documentSnapshot.getLong("_id")).intValue();
         String messageText = documentSnapshot.getString("_message");
         String local_timestamp = documentSnapshot.getString("_local_timestamp");
-        return new Message(id, messageText, local_timestamp);
+        String device_ID = documentSnapshot.getString("_deviceID");
+        return new Message(id, messageText, device_ID, local_timestamp);
     }
 
     public interface DatabaseStateRefreshable
