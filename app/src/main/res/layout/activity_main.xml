@@ -8,12 +8,12 @@
     >
 
     <TextView
-        android:id="@+id/titleTextView"
+        android:id="@+id/username"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="10"
-        android:gravity="center"
-        android:text="ex4 self whatsapp"
+        android:gravity="end"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
         />
 

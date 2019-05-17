@@ -54,6 +54,12 @@ public class ConfigureNameActivity extends AppCompatActivity {
                 loadMainActivity(fillMyName.getText().toString());
             }
         });
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadMainActivity(null);
+            }
+        });
     }
 
     private void sendUsernameToDB(){
